@@ -29,3 +29,8 @@ next-env.d.ts
 # design handoff source (kept locally, not part of the app)
 /_extracted/
 /ecommerece-handoff.zip
+
+# ML build artifacts + training data (rebuilt by train.py, never commit)
+recommender-azure/model/
+recommender-azure/*.tsv
+*.pkl

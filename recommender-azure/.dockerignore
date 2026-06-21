@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+*.tsv
+deploy.py
+score.py
+conda.yaml
+README.md

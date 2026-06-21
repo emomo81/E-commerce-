@@ -1,0 +1,11 @@
+name: isoko-recs
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - scikit-learn==1.4.2
+      - pandas
+      - numpy
+      - azureml-inference-server-http

@@ -70,20 +70,24 @@ function clampLimit(n: unknown): number {
   return Math.max(1, Math.min(10, Math.floor(v)));
 }
 
-/* Call the Azure recommender. The deployed model is keyed by product *name*,
- * so we send the catalog title for the given product_id. Throws on any
- * non-2xx / timeout so the caller can fall back. */
-async function fromAzure(body: RecRequest) {
+/* Call the deployed recommender (Render/Azure). The Isoko model is keyed by
+ * product id and returns Isoko product ids, so we send product_id (plus the
+ * title for older name-keyed models). Throws on any non-2xx / timeout / empty
+ * result so the caller can fall back to the local engine. */
+async function fromUpstream(body: RecRequest) {
   const url = process.env.RECS_URL;
   if (!url) throw new Error("RECS_URL not set");
-  const itemName = body.product_id ? byId[body.product_id]?.title ?? body.product_id : "";
   const res = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       ...(process.env.RECS_KEY ? { Authorization: `Bearer ${process.env.RECS_KEY}` } : {}),
     },
-    body: JSON.stringify({ item_name: itemName, top_n: clampLimit(body.limit) }),
+    body: JSON.stringify({
+      product_id: body.product_id ?? undefined,
+      item_name: body.product_id ? byId[body.product_id]?.title : undefined,
+      top_n: clampLimit(body.limit),
+    }),
     signal: AbortSignal.timeout(3000),
   });
   if (!res.ok) throw new Error(`recs upstream ${res.status}`);
@@ -101,13 +105,13 @@ export async function POST(req: Request) {
     /* empty / invalid body -> defaults */
   }
 
-  // Prefer the deployed Azure model when configured; fall back to local.
+  // Prefer the deployed model when configured; fall back to local on any error.
   if (process.env.RECS_URL) {
     try {
-      const recommendations = await fromAzure(body);
-      return NextResponse.json({ recommendations, model_version: "azure", served_from: "azure" });
+      const recommendations = await fromUpstream(body);
+      return NextResponse.json({ recommendations, model_version: "isoko-content", served_from: "render" });
     } catch (err) {
-      console.warn("[recommendations] Azure upstream failed, using local fallback:", err);
+      console.warn("[recommendations] upstream failed, using local fallback:", err);
     }
   }
   return NextResponse.json(buildResponse(body));

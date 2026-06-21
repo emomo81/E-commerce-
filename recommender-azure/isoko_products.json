@@ -1,0 +1,18 @@
+[
+  { "id": "p1", "title": "Kitenge Wrap Dress", "cat": "fashion", "desc": "Hand-finished Kitenge wrap dress in bold Ankara print. Lightweight cotton, made in Kigali. Adjustable waist tie." },
+  { "id": "p2", "title": "Wireless Earbuds Pro", "cat": "electronics", "desc": "True-wireless earbuds with active noise cancellation, 28h battery with case, USB-C fast charge. 1-year local warranty." },
+  { "id": "p3", "title": "Woven Sisal Basket", "cat": "home", "desc": "Traditional Agaseke-inspired sisal basket, hand-woven in Musanze. Perfect for storage or as a statement piece." },
+  { "id": "p4", "title": "Shea Glow Serum", "cat": "beauty", "desc": "Brightening face serum with East-African shea and vitamin C. Lightweight, fragrance-free, 30ml." },
+  { "id": "p5", "title": "Leather Crossbody Bag", "cat": "accessories", "desc": "Full-grain leather crossbody with adjustable strap and brass hardware. Ages beautifully." },
+  { "id": "p6", "title": "Smartphone A54 128GB", "cat": "phones", "desc": "6.4-inch AMOLED, 50MP triple camera, 5000mAh battery, dual SIM. Includes screen protector and case." },
+  { "id": "p7", "title": "Ankara Bomber Jacket", "cat": "fashion", "desc": "Statement bomber with quilted lining and Ankara panel sleeves. Unisex fit." },
+  { "id": "p8", "title": "Bluetooth Speaker Mini", "cat": "electronics", "desc": "Pocket-size speaker, IPX6 waterproof, 12h playtime, deep bass. Pairs in stereo." },
+  { "id": "p9", "title": "Ceramic Coffee Set", "cat": "home", "desc": "Four-piece stoneware coffee set, reactive glaze. Microwave and dishwasher safe." },
+  { "id": "p10", "title": "Matte Lip Set (5)", "cat": "beauty", "desc": "Five long-wear matte liquid lipsticks in warm everyday shades. Cruelty-free." },
+  { "id": "p11", "title": "Beaded Statement Necklace", "cat": "accessories", "desc": "Hand-beaded brass and glass necklace. Adjustable length, lightweight." },
+  { "id": "p12", "title": "Smart Watch Active", "cat": "electronics", "desc": "AMOLED fitness watch, heart-rate and SpO2, 100+ sport modes, 10-day battery. Calls via Bluetooth." },
+  { "id": "p13", "title": "Cotton Tunic Shirt", "cat": "fashion", "desc": "Breathable cotton tunic with embroidered neckline. Everyday comfort." },
+  { "id": "p14", "title": "Woven Floor Mat", "cat": "home", "desc": "Durable hand-woven floor mat, natural fibre, reversible pattern. 120x80cm." },
+  { "id": "p15", "title": "Hydrating Face Mist", "cat": "beauty", "desc": "Rosewater and aloe facial mist. Sets makeup and refreshes skin. 100ml." },
+  { "id": "p16", "title": "Power Bank 20000mAh", "cat": "electronics", "desc": "Fast-charge power bank, dual USB-C PD, charges a phone 4x. Slim aluminium body." }
+]

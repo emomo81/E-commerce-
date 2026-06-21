@@ -1,9 +1,12 @@
 """
-Isoko recommender — FastAPI service for Azure Container Apps (scale-to-zero).
+Isoko recommender — FastAPI service (Azure Container Apps / Render / local).
 
-Same model + logic as the Azure ML scoring script, but packaged as a plain HTTP
-service so it can run on Azure Container Apps (pay-per-request, scales to zero)
-instead of an always-on Managed Online Endpoint.
+Serves content-based recommendations for the Isoko catalog. The model is keyed
+by product *id* (see train_isoko.py), so this returns Isoko product IDs that the
+Next.js storefront hydrates directly.
+
+Request : { "product_id": "p6", "top_n": 10 }   (item_name also accepted)
+Response: { "recommendations": [ { "product_id": "p8", "score": 0.42, "reason": "content" }, ... ] }
 
 The model.pkl is baked into the image (see Dockerfile) at /app/model/model.pkl.
 """
@@ -28,8 +31,9 @@ def get_model():
 
 
 class RecRequest(BaseModel):
-    item_name: str
-    top_n: int = 8
+    product_id: str | None = None
+    item_name: str | None = None
+    top_n: int = 10
 
 
 @app.get("/health")
@@ -40,14 +44,28 @@ def health():
 @app.post("/recommend")
 def recommend(req: RecRequest):
     model = get_model()
-    df = model["train_data"]
+    ids = model["ids"]
+    cats = model.get("cats", [])
+    titles = model.get("titles", [])
     cosine_sim = model["cosine_sim"]
 
-    if req.item_name not in df["Name"].values:
-        return {"error": f"Item not found: {req.item_name}", "recommendations": []}
+    # Resolve the seed product index by id (preferred) or by title.
+    idx = None
+    if req.product_id and req.product_id in ids:
+        idx = ids.index(req.product_id)
+    elif req.item_name and req.item_name in titles:
+        idx = titles.index(req.item_name)
+    if idx is None:
+        return {"recommendations": []}  # unknown -> let the caller fall back
 
-    idx = df[df["Name"] == req.item_name].index[0]
+    seed_cat = cats[idx] if cats else None
     scores = sorted(enumerate(cosine_sim[idx]), key=lambda x: x[1], reverse=True)
-    top = scores[1 : req.top_n + 1]
-    rows = df.iloc[[i for i, _ in top]][["Name", "Brand", "Rating", "ImageURL", "ReviewCount"]]
-    return {"recommendations": rows.to_dict(orient="records")}
+    out = []
+    for i, score in scores:
+        if i == idx:
+            continue  # skip the seed product itself
+        reason = "content" if (seed_cat and cats and cats[i] == seed_cat) else "popularity"
+        out.append({"product_id": ids[i], "score": round(float(score), 3), "reason": reason})
+        if len(out) >= req.top_n:
+            break
+    return {"recommendations": out}
